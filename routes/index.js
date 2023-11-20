@@ -1,9 +1,7 @@
-
+const AuthRouter = require('./routers/AuthRouter')
 
 function route(app){
-    app.use('/', function(req, res){
-        res.json('Hello world') 
-    })
+    app.use('/api/v1/auth', AuthRouter)
 }
 
 module.exports = route
