@@ -6,7 +6,6 @@ const ErrorRes = require('../utils/ErrorRes')
 //GET /Carts
 exports.listCarts = async (req, res, next) => {
     try{
-        console.log('hello')
         const carts = await Carts.find({user: req.user._id})
             .sort({updatedAt: -1})
             .populate('food', 'name image slug price')
