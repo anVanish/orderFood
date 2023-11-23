@@ -5,8 +5,10 @@ const {listFood, addFood, detailFood, updateFood, deleteFood} = require('../../a
 
 router.get('/', listFood)
 router.get('/:slug', detailFood)
+
+router.use(authToken, authAdmin)
 router.post('/', addFood)
-router.patch('/:slug', updateFood)
+router.put('/:slug', updateFood)
 router.delete('/:slug', deleteFood)
 
 module.exports = router

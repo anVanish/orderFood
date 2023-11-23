@@ -24,7 +24,6 @@ const Users = new mongoose.Schema({
                 message: "Invalid phone! Must be 10 digit and start with 0",
             },
         ],
-        unique: [true, 'Phone is already exists'],
     },
     password: { type: String, required: [true, "Please enter password"] },
     name: {
