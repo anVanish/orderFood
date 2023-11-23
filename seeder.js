@@ -13,17 +13,15 @@ db.connect()
 
 async function seedAdmin(){
     try{
-        const admin = await Users.findOne({isAdmin: true})
-        if (!admin){
-            const salt = bcrypt.genSaltSync()
-            const adminUser = new Users({
-                email: 'admin@gmail.com',
-                password: bcrypt.hashSync('admin', salt),
-                isAdmin: true,
-                isVerified: true,
-            })
-            await adminUser.save()
-        }
+        await Users.deleteMany({isAdmin: true})
+        const salt = bcrypt.genSaltSync()
+        const adminUser = new Users({
+            email: 'admin@gmail.com',
+            password: bcrypt.hashSync('admin', salt),
+            isAdmin: true,
+            isVerified: true,
+        })
+        await adminUser.save()
         console.log('Admin success to import')
     }catch(error){
         console.log(`Admin failure to import, ${error.message}`)
