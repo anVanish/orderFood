@@ -23,6 +23,13 @@ class ApiRes{
         this.data[field] = data
         return this
     }
+
+    setMultiData(fields, datas){
+        for (let i = 0; i < fields.length; i++){
+            this.data[fields[i]] = datas[i]
+        }
+        return this
+    }
 }
 
 module.exports = ApiRes
