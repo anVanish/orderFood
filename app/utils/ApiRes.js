@@ -2,7 +2,7 @@
 
 class ApiRes{
     constructor(){
-        this.success = ''
+        this.success = true
         this.message = ''
         this.data = {}
     }
