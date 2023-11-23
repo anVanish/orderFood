@@ -1,53 +1,73 @@
-const Categories = require('../models/Categories')
+const Carts = require('../models/Carts')
+const Foods = require('../models/Foods')
 const ApiRes = require('../utils/ApiRes')
 const ErrorRes = require('../utils/ErrorRes')
 
-//GET /categories
+//GET /Carts
 exports.listCarts = async (req, res, next) => {
     try{
-        const cates = await Categories.find({})
+        console.log('hello')
+        const carts = await Carts.find({user: req.user._id})
             .sort({updatedAt: -1})
-        const count = await Categories.countDocuments({})
+            .populate('food', 'name image slug price')
+        const totalPrice = carts.reduce((total, cart) => {
+            if (cart.food && cart.food.price) return total + cart.food.price * cart.quantity
+            return total
+        }, 0)
+        
+        const count = await Carts.countDocuments({user: req.user._id})
 
         const apiRes = new ApiRes()
             .setData('count', count)
-            .setData('cates', cates)
+            .setData('totalPrice', totalPrice)
+            .setData('carts', carts)
         res.json(apiRes)
     }catch(error){
         next(error)
     }
 }
 
-//POST /categories
+//POST /Carts
 exports.addCart = async (req, res, next) => {
     try{
-        const cate = new Categories(req.body)
-        await cate.save()
-        const apiRes = new ApiRes().setData('cate', cate).setSuccess('Category added')
+        const food = await Foods.findOne({_id: req.body.food})
+        if (!food) throw new ErrorRes('Food not found', 404)
+
+        const apiRes = new ApiRes().setSuccess('Cart added')
+        const existCart = await Carts.findOne({food: food._id})
+        if (existCart){
+            existCart.quantity += req.body.quantity
+            await existCart.save()
+            apiRes.setData('cart', existCart)
+        } else {
+            const cart = new Carts({...req.body, user: req.user._id})
+            await cart.save()
+            apiRes.setData('cart', cart)
+        }
         res.json(apiRes)
     }catch(error){
         next(error)
     }
 }
 
-//PUT /categories/:id
+//PUT /Carts/:id
 exports.updateCart = async (req, res, next) => {
     try{
-        const cate = await Categories.findOneAndUpdate({_id: req.params.id}, req.body, {new: true})
-        if (!cate) throw new ErrorRes('Category not found', 404)
-        const apiRes = new ApiRes().setData(['cate'], cate).setSuccess('Category updated')
+        const cart = await Carts.findOneAndUpdate({_id: req.params.id}, {quantity: req.body.quantity}, {new: true})
+        if (!cart) throw new ErrorRes('Cart not found', 404)
+        const apiRes = new ApiRes().setData(['cart'], cart).setSuccess('Cart updated')
         res.json(apiRes)
     }catch(error){
         next(error)
     }
 }
 
-//DELETE /categories/:id
+//DELETE /carts/:id
 exports.deleteCart = async (req, res, next) => {
     try{
-        const cate = await Foods.findOneAndDelete({_id: req.params.id})
-        if (!cate) throw new ErrorRes('Category not found', 404)
-        const apiRes = new ApiRes().setSuccess('Category deleted')
+        const cart = await Carts.findOneAndDelete({_id: req.params.id})
+        if (!cart) throw new ErrorRes('Cart not found', 404)
+        const apiRes = new ApiRes().setSuccess('Cart deleted')
         res.json(apiRes)
     }catch(error){
         next(error)

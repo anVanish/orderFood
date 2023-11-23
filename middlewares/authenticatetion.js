@@ -16,11 +16,12 @@ exports.authToken = (req, res, next) =>{
 }
 
 exports.authUser = (req, res, next) =>{
-    if (!req.user || req.user._id) return next('Required login', 401)
+    console.log(req.user)
+    if (!req.user || !req.user._id) return next(new ErrorRes('Required login', 401))
     next()
 }
 
 exports.authAdmin = (req, res, next) =>{
-    if (!req.user || !req.user.isAdmin) return next('Required admin', 401)
+    if (!req.user || !req.user.isAdmin) return next(new ErrorRes('Required login', 401))
     next()
 }

@@ -6,7 +6,7 @@ const {listCarts, addCart, updateCart, deleteCart} = require('../../app/controll
 router.use(authToken, authUser)
 router.get('/', listCarts)
 router.post('/', addCart)
-router.put('/:id', updateCart)
+router.patch('/:id', updateCart)
 router.delete('/:id', deleteCart)
 
 module.exports = router
